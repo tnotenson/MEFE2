@@ -11,7 +11,7 @@ import array
 # Este script calcula el intervalo frecuentista para el mu de una variable aleatoria de Poisson.
 
 mu_min = 0.0
-mu_max = 6.5
+mu_max = 20.0
 CL = 0.6827
 nscan_points= 1000
 CoverageMin = 0.0
