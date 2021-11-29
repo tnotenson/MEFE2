@@ -24,7 +24,7 @@ CoverageMin = 0.0
 
 # (1) Intervalo usando la varianza:  nobs +- sqrt(nobs) /////////////////////
 # A completar!
-def isInside1(nobs,mu):
+def IsInside1(nobs,mu):
     sigma = np.sqrt(mu)
     xmin = nobs - sigma
     xmax = nobs + sigma
@@ -34,17 +34,29 @@ def isInside1(nobs,mu):
 # A completar!
     
 def LL(nobs,mu):
-    return -mu+nobs*np.log(mu)
+    if mu>0:
+        return -mu+nobs*np.log(mu)
+    else:
+        return 0
 
-def isInside2(nobs,mu):
+def LLvec(nobs,mus):
+    if len(mus)>0:
+        return -mus+nobs*np.log(mus)
+    else:
+        return np.zeros((len(mus)))
+    
+
+def IsInside2(nobs,mu):
     LLmax = LL(nobs,nobs)
     # LL = TF1("LL", "-x+[0]*log(x)",0.001,10*mu);
     y = LLmax - 1/2
     dom = np.linspace(0.001, 10*mu,1000)
     img = LL(nobs,dom)
     arr1 = np.where(img >= y)
-    xmin = dom[min(arr1)]
-    xmax = dom[max(arr1)]
+    xmin = dom[min(arr1[0])]
+    print(xmin)
+    xmax = dom[max(arr1[0])]
+    print(xmax)
     return (xmin <= mu and mu <= xmax)
 
 
@@ -57,14 +69,15 @@ def IsInside3(nobs,mu):
 
 ###########################################################################
 # Cobertura vs mu a ser guardadas en tres objetos de la clase TGraphs
-# TGraph * g1 = new TGraph(nscan_points);
-# TGraph * g2 = new TGraph(nscan_points);
+g1 = TGraph(nscan_points);
+g2 = TGraph(nscan_points);
 g3 = TGraph(nscan_points);
 
 # Bucle sobre mu, desde mu_min a mu_max.
 # Para cada mu calcula la cobertura del intervalo y lo guarda en el TGraphs.
 for i in range(0,nscan_points):
     mu = mu_min + (mu_max-mu_min)/(nscan_points-1) * i;
+    print(mu)
    
     Nmax = int(mu+10*np.sqrt(mu))+1 # esperanza mas 10 veces sigma
 
@@ -73,6 +86,7 @@ for i in range(0,nscan_points):
 
     # Barro desde n observado hasta la esperanza mas 10 veces sigma    
     for nobs in range(0,Nmax):
+        # print(mu)
         inside1 = IsInside1(nobs,mu); inside2 = IsInside2(nobs,mu); inside3 = IsInside3(nobs,mu);
         prob = ROOT.Math.poisson_pdf(nobs,mu);
         # Completar con lo correspondiente a los otros dos intervalos
@@ -120,5 +134,5 @@ g3.SetLineWidth(2);
 g3.SetLineColor(kBlack);
 g3.Draw("L");
 
-#nombre = input("Presiona una tecla para terminar")  # Asi en python3
-nombre = raw_input("Presiona una tecla para terminar...")  # Asi en python2
+nombre = input("Presiona una tecla para terminar")  # Asi en python3
+# nombre = raw_input("Presiona una tecla para terminar...")  # Asi en python2
