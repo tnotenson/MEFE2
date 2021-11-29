@@ -25,7 +25,7 @@ CoverageMin = 0.0
 # (1) Intervalo usando la varianza:  nobs +- sqrt(nobs) /////////////////////
 # A completar!
 def IsInside1(nobs,mu):
-    sigma = np.sqrt(mu)
+    sigma = np.sqrt(nobs)
     xmin = nobs - sigma
     xmax = nobs + sigma
     return (xmin <= mu and mu <= xmax)
