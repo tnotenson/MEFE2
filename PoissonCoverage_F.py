@@ -11,7 +11,7 @@ import array
 # Este script calcula el intervalo frecuentista para el mu de una variable aleatoria de Poisson.
 
 mu_min = 0.0
-mu_max = 6.5
+mu_max = 20.0
 CL = 0.6827
 nscan_points= 1000
 CoverageMin = 0.0
@@ -25,7 +25,7 @@ CoverageMin = 0.0
 # (1) Intervalo usando la varianza:  nobs +- sqrt(nobs) /////////////////////
 # A completar!
 def IsInside1(nobs,mu):
-    sigma = np.sqrt(mu)
+    sigma = np.sqrt(nobs)
     xmin = nobs - sigma
     xmax = nobs + sigma
     return (xmin <= mu and mu <= xmax)
@@ -47,12 +47,15 @@ def LLvec(nobs,mus):
     
 
 def IsInside2(nobs,mu):
-    LLmax = LL(nobs,nobs)
+    #LLmax = LL(nobs,nobs)
+    #print(LLmax)
     # LL = TF1("LL", "-x+[0]*log(x)",0.001,10*mu);
-    y = LLmax - 1/2
-    dom = np.linspace(0.001, 10*mu,1000)
-    img = LL(nobs,dom)
+    dom = np.linspace(0.001, 10*mu,10000)
+    img = LLvec(nobs,dom)
+    y = max(img) - 1/2
+    print(img)
     arr1 = np.where(img >= y)
+    #print(arr1)
     xmin = dom[min(arr1[0])]
     print(xmin)
     xmax = dom[max(arr1[0])]
