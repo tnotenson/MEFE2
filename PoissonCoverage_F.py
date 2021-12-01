@@ -102,27 +102,30 @@ def IsInside4(nobs,mu):
         xmax = -np.log(1-CL)
         return (xmin <= mu and mu <= xmax)
     
-    ########## python ########################################################
-    x = np.linspace(mu_min, mu_max, nscan_points)
-    N = quad(poisson_bayes, 0, np.inf, args=(nobs,))[0]
+    ########## python ## IN PROCESS ############################################
+    #x = np.linspace(mu_min, mu_max, nscan_points)
+    #N = quad(poisson_bayes, 0, np.inf, args=(nobs,))[0]
     
 
     
-    cdf_bayes = 0
-    i = 0
-    while cdf_bayes <= alpha and i<nscan_points:
-        m = x[i]
-        cdf_bayes = quad(poisson_bayes, 0, m, args=(nobs,))[0]/N
-        i += 1
-    xmin = x[i]
-    
-    cdf_bayes = 0
-    while cdf_bayes <= alpha and i<nscan_points:
-        print(i)
-        m = x[i]
-        cdf_bayes = quad(poisson_bayes, m, np.inf, args=(nobs,))[0]/N
-        i += 1
-    xmax = x[i]
+    #cdf_bayes = 0
+    #i = 0
+    #while cdf_bayes <= alpha and i<nscan_points:
+    #    print('while 1',i)
+    #    m = x[i]
+    #    cdf_bayes = quad(poisson_bayes, 0, m, args=(nobs,))[0]/N
+    #    i += 1
+    #if i == len(x):i -= 1
+    #xmin = x[i]
+    #
+    #cdf_bayes = 0
+    #while cdf_bayes <= alpha and i<nscan_points:
+    #    print('while 2',i)
+    #    m = x[i]
+    #    cdf_bayes = quad(poisson_bayes, m, np.inf, args=(nobs,))[0]/N
+    #    i += 1
+    #if i == len(x):i -= 1
+    #xmax = x[i]
     
     ########## pyROOT #########################################################
     fP = TF1("fP", "[0]*TMath::PoissonI([1],x)",0.0001,mu+10*np.sqrt(mu),1);
@@ -131,11 +134,12 @@ def IsInside4(nobs,mu):
     N = fP.Integral(0,np.inf)
     fP.SetParameter(0,1/N) # normalizo
     
-    xq=array.array('d',[alpha, 1-alpha]) # array donde guardarlo
-    yq=array.array('d',[0.,0.]) # array donde guardarlo
+    xq=array.array('d',[alpha, 1-alpha]) # array con las prob cuantiles
+    yq=array.array('d',[0.,0.]) # array donde guardar los cuantiles
     
-    fP.GetQuantiles(2,xq,yq)
-    print(yq)
+    fP.GetQuantiles(2,yq,xq)
+    print(mu, yq)
+    xmin, xmax = yq
     
     return (xmin <= mu and mu <= xmax)
     
@@ -175,7 +179,7 @@ for i in range(0,nscan_points):
     g1.SetPoint(i,mu,probInside1);
     g2.SetPoint(i,mu,probInside2);
     g3.SetPoint(i,mu,probInside3);
-    #g4.SetPoint(i,mu,probInside4);
+    g4.SetPoint(i,mu,probInside4);
    
 
 ########################################################################
