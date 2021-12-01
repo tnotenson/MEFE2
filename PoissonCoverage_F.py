@@ -104,7 +104,7 @@ def IsInside4(nobs,mu):
     
     ########## python ########################################################
     x = np.linspace(mu_min, mu_max, nscan_points)
-    N = quad(poisson_bayes, 0, np.inf, arges=(nobs,))[0]
+    N = quad(poisson_bayes, 0, np.inf, args=(nobs,))[0]
     
 
     
@@ -125,19 +125,19 @@ def IsInside4(nobs,mu):
     xmax = x[i]
     
     ########## pyROOT #########################################################
-    fP = LF1("fP", "[0]*TMath::PoissonI([1],x)",0.0001,mu+10*np.sqrt(mu),1);
+    fP = TF1("fP", "[0]*TMath::PoissonI([1],x)",0.0001,mu+10*np.sqrt(mu),1);
     fP.SetParameter(0,1) # lo fijo en 1 para integrar y luego normalizo
     fP.SetParameter(1,nobs) 
-    N = fP.Integral(o,np.inf)
+    N = fP.Integral(0,np.inf)
     fP.SetParameter(0,1/N) # normalizo
     
     xq=array.array('d',[alpha]) # array donde guardarlo
     yq=array.array('d',[0.]) # array donde guardarlo
     
-    fP.GetQuantiles(1,yp,xp)
-    print(yp)
-    fP.GetQuantiles(1,yp,1-xp)
-    print(yp)
+    fP.GetQuantiles(1,yq,xq)
+    print(yq)
+    fP.GetQuantiles(1,yq,1-xq)
+    print(yq)
     
     return (xmin <= mu and mu <= xmax)
     
@@ -146,24 +146,24 @@ def IsInside4(nobs,mu):
 g1 = TGraph(nscan_points);
 g2 = TGraph(nscan_points);
 g3 = TGraph(nscan_points);
-#g4 = TGraph(nscan_points);
+g4 = TGraph(nscan_points);
 
-# Bucle sobre mu, desde mu_min a mxmax.
+# Bucle sobre mu, desde mu_min a mu_max.
 # Para cada mu calcula la cobertura del intervalo y lo guarda en el TGraphs.
 for i in range(0,nscan_points):
-    mu = mu_min + (mxmax-mu_min)/(nscan_points-1) * i;
+    mu = mu_min + (mu_max-mu_min)/(nscan_points-1) * i;
     #print(mu)
    
     Nmax = int(mu+10*np.sqrt(mu))+1 # esperanza mas 10 veces sigma
 
     # Inicializar las variables que faltan
-    probInside1 = 0; probInside2 = 0; probInside3 = 0; #probInside4 = 0
+    probInside1 = 0; probInside2 = 0; probInside3 = 0; probInside4 = 0
 
     # Barro desde n observado hasta la esperanza mas 10 veces sigma    
     for nobs in range(0,Nmax):
         # print(mu)
         inside1 = IsInside1(nobs,mu); inside2 = IsInside2(nobs,mu); 
-        inside3 = IsInside3(nobs,mu); #inside4 = IsInside4(nobs,mu);
+        inside3 = IsInside3(nobs,mu); inside4 = IsInside4(nobs,mu);
         prob = ROOT.Math.poisson_pdf(nobs,mu);
         # Completar con lo correspondiente a los otros dos intervalos
 
@@ -171,7 +171,7 @@ for i in range(0,nscan_points):
         if (inside1): probInside1 += prob;
         if (inside2): probInside2 += prob;
         if (inside3): probInside3 += prob;
-    #    if (inside4): probInside4 += prob;
+        if (inside4): probInside4 += prob;
 
     Offset = 0.003; # Vertical offset between plots to avoid overlap   
     g1.SetPoint(i,mu,probInside1);
@@ -215,11 +215,11 @@ gPad.Update();
 gPad.WaitPrimitive();
 
 # Bayesian interval (Green line)
-#g4.SetLineWidth(2);
-#g4.SetLineColor(kGreen);
-#g4.Draw("L");
-#gPad.Update();
-#gPad.WaitPrimitive();
+g4.SetLineWidth(2);
+g4.SetLineColor(kGreen);
+g4.Draw("L");
+gPad.Update();
+gPad.WaitPrimitive();
 
 nombre = input("Presiona una tecla para terminar")  # Asi en python3
 # nombre = raw_input("Presiona una tecla para terminar...")  # Asi en python2
