@@ -56,6 +56,7 @@ def LLvec(nobs,mus):
    
 
 def IsInside2(nobs,mu):
+    ########## python ########################################################
     # LLmax = LL(nobs,nobs)
     # dom = np.linspace(0.001, mu+10*np.sqrt(mu),1000)
     # img = LLvec(nobs,dom); y = LLmax - 1/2
@@ -63,6 +64,7 @@ def IsInside2(nobs,mu):
     # xmin = dom[arr1[0][0]]; xmax = dom[arr1[0][-1]]
     # print('python puro',xmin, xmax)
     
+    ######### pyROOT #########################################################
     delta = 1/2
     rootLL = TF1("rootLL", "-x+[n]*log(x)",0.0001,mu+10*np.sqrt(mu),1);
     rootLL.SetParameter(0,nobs)
@@ -70,8 +72,9 @@ def IsInside2(nobs,mu):
     # print('nobs',muMLE,nobs)
     LL_max = rootLL.Eval(muMLE);
     if nobs==0:
-        xmin = 0
-        xmax = delta
+        # LL = -x; LLmax = 0 porque x>0; LLmax - 1/2 = -1/2
+        xmin = 0 #     porque mu>0
+        xmax = delta # porque LLmax-1/2 = = -1/2 = -x
     else:
         xmin = rootLL.GetX(LL_max-delta,0.0001,muMLE);
         xmax = rootLL.GetX(LL_max-delta,muMLE,5*muMLE);
@@ -87,28 +90,42 @@ def IsInside3(nobs,mu):
     xmax = 0.5* ROOT.Math.chisquared_quantile_c( alpha/2, 2*(nobs+1));
     return (xmin <= mu and mu <= xmax)
 
-#def poisson_bayes(x, nobs):
-#    return poisson.pmf(nobs, x)
+def poisson_bayes(x, nobs):
+    return poisson.pmf(nobs, x)
 
 # (4) Intervalo bayesiano
-#def IsInside4(nobs,mu):
-#    alpha = (1 - CL)/2;
-#    x = np.linspace(mu_min, mu_max, nscan_points)
-#    cdf_bayes = 0
-#    i = 0
-#    while cdf_bayes < alpha:
-#        mu = x[i]
-#        cdf_bayes = quad(poisson_bayes, 0, mu, args=(nobs,))[0]
-#        i += 1
-#    u_min = x[i]
-#    cdf_bayes = 0
-#    while cdf_bayes < alpha:
-#        print(i)
-#        mu = x[i]
-#        cdf_bayes = quad(poisson_bayes, mu, np.inf, args=(nobs,))[0]
-#        i += 1
-#    u_max = x[i]
-#    return (u_min <= mu and mu <= u_max)
+def IsInside4(nobs,mu):
+    alpha = (1 - CL)/2;
+    
+    ########## python ########################################################
+    x = np.linspace(mu_min, mu_max, nscan_points)
+    N = quad(poisson_bayes, 0, np.inf, arges=(nobs,))[0]
+    
+    if nobs == 0: # Calculo exactamente el caso nobs = 0
+        xmin = 0
+        xmax = -np.log(1-CL)
+        return (xmin <= mu and mu <= u_max)
+    
+    cdf_bayes = 0
+    i = 0
+    while cdf_bayes <= alpha and i<nscan_points:
+        m = x[i]
+        cdf_bayes = quad(poisson_bayes, 0, m, args=(nobs,))[0]/N
+        i += 1
+    xmin = x[i]
+    
+    cdf_bayes = 0
+    while cdf_bayes <= alpha and i<nscan_points:
+        print(i)
+        m = x[i]
+        cdf_bayes = quad(poisson_bayes, m, np.inf, args=(nobs,))[0]/N
+        i += 1
+    xmax = x[i]
+    
+    ########## pyROOT #########################################################
+    
+    
+    return (xmin <= mu and mu <= xmax)
     
 ###########################################################################
 # Cobertura vs mu a ser guardadas en tres objetos de la clase TGraphs
@@ -117,10 +134,10 @@ g2 = TGraph(nscan_points);
 g3 = TGraph(nscan_points);
 #g4 = TGraph(nscan_points);
 
-# Bucle sobre mu, desde mu_min a mu_max.
+# Bucle sobre mu, desde mu_min a mxmax.
 # Para cada mu calcula la cobertura del intervalo y lo guarda en el TGraphs.
 for i in range(0,nscan_points):
-    mu = mu_min + (mu_max-mu_min)/(nscan_points-1) * i;
+    mu = mu_min + (mxmax-mu_min)/(nscan_points-1) * i;
     #print(mu)
    
     Nmax = int(mu+10*np.sqrt(mu))+1 # esperanza mas 10 veces sigma
