@@ -131,12 +131,10 @@ def IsInside4(nobs,mu):
     N = fP.Integral(0,np.inf)
     fP.SetParameter(0,1/N) # normalizo
     
-    xq=array.array('d',[alpha]) # array donde guardarlo
-    yq=array.array('d',[0.]) # array donde guardarlo
+    xq=array.array('d',[alpha, 1-alpha]) # array donde guardarlo
+    yq=array.array('d',[0.,0.]) # array donde guardarlo
     
-    fP.GetQuantiles(1,yq,xq)
-    print(yq)
-    fP.GetQuantiles(1,yq,1-xq)
+    fP.GetQuantiles(2,xq,yq)
     print(yq)
     
     return (xmin <= mu and mu <= xmax)
