@@ -115,7 +115,6 @@ def IsInside4(nobs,mu):
     #    m = x[i]
     #    cdf_bayes = quad(poisson_bayes, 0, m, args=(nobs,))[0]/N
     #    i += 1
-    #if i == len(x):i -= 1
     #xmin = x[i]
     #
     #cdf_bayes = 0
@@ -124,7 +123,6 @@ def IsInside4(nobs,mu):
     #    m = x[i]
     #    cdf_bayes = quad(poisson_bayes, m, np.inf, args=(nobs,))[0]/N
     #    i += 1
-    #if i == len(x):i -= 1
     #xmax = x[i]
     
     ########## pyROOT #########################################################
@@ -189,7 +187,7 @@ canvas.Divide(2,2, 0.001, 0.001);
 
 canvas.cd(1);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Aprox. Gaussiana;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Aprox. Gaussiana;$\mu$;Cobertura");
 
 
 l = TLine(mu_min,CL,mu_max,CL);
@@ -208,7 +206,7 @@ gPad.WaitPrimitive();
 
 canvas.cd(2);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Log Likelihood;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Log Likelihood;$\mu$;Cobertura");
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
@@ -222,7 +220,7 @@ gPad.WaitPrimitive();
   
 canvas.cd(3);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Frecuentista;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Frecuentista;$\mu$;Cobertura");
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
@@ -236,7 +234,7 @@ gPad.WaitPrimitive();
 
 canvas.cd(4);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Bayesiano;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Bayesiano;$\mu$;Cobertura");
 
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
