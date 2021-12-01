@@ -184,9 +184,12 @@ for i in range(0,nscan_points):
 
 ########################################################################
 # Create TCanvas & TFrame, and a TLine at CL for reference 
-canvas = TCanvas("canvas","canvas",700,500);
+canvas = TCanvas("canvas","canvas",700,1000);
+canvas.Divide(1,3);
 
 gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+
+canvas.cd(1);
 
 l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
@@ -202,6 +205,12 @@ g1.Draw("L");
 gPad.Update();
 gPad.WaitPrimitive();
 
+canvas.cd(2);
+
+l = TLine(mu_min,CL,mu_max,CL);
+l.SetLineStyle(kDashed);
+l.Draw(); # Draw a reference line at y-axis = CL
+
 # LogLikelihood interval (Blue line) 
 g2.SetLineWidth(2);
 g2.SetLineColor(kBlue);
@@ -209,12 +218,24 @@ g2.Draw("L");
 gPad.Update();
 gPad.WaitPrimitive();
   
+canvas.cd(3);
+
+l = TLine(mu_min,CL,mu_max,CL);
+l.SetLineStyle(kDashed);
+l.Draw(); # Draw a reference line at y-axis = CL
+
 # Analytic frequentist interval (Black line) 
 g3.SetLineWidth(2);
 g3.SetLineColor(kBlack);
 g3.Draw("L");
 gPad.Update();
 gPad.WaitPrimitive();
+
+canvas.cd(4);
+
+l = TLine(mu_min,CL,mu_max,CL);
+l.SetLineStyle(kDashed);
+l.Draw(); # Draw a reference line at y-axis = CL
 
 # Bayesian interval (Green line)
 g4.SetLineWidth(2);
