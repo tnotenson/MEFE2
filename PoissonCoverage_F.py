@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os,sys,time
 import pickle
-# import ROOT
-# from ROOT import TH1D, TRandom3, TCanvas, TF1, gStyle, TFitResultPtr, kRed, kBlue, kGreen, kGray, kCyan, kMagenta, TGraphErrors, gPad, TLine, kDashed, double, gROOT, TMath, TPaveLabel, gMinuit, TTree, TH1F, TLegend, TFile, TArrow, TVirtualFitter, TMatrixDSym, TGraph, kBlack, TLatex
+import ROOT
+from ROOT import TH1D, TRandom3, TCanvas, TF1, gStyle, TFitResultPtr, kRed, kBlue, kGreen, kGray, kCyan, kMagenta, TGraphErrors, gPad, TLine, kDashed, double, gROOT, TMath, TPaveLabel, gMinuit, TTree, TH1F, TLegend, TFile, TArrow, TVirtualFitter, TMatrixDSym, TGraph, kBlack, TLatex
 from decimal import *
 import array
 from scipy.stats import poisson
@@ -34,11 +34,11 @@ def IsInside1(nobs,mu):
 # (2) Intervalo usando la verosimilitud: LL(ci_limits) = LLmax-1/2 ///////////
 # A completar!
     
-def LL(nobs,mu):
-    if mu>0:
-        return -mu+nobs*np.log(mu)
-    else:
-        return 0
+# def LL(nobs,mu):
+#     if mu>0:
+#         return -mu+nobs*np.log(mu)
+#     else:
+#         return 0
 
 def LLvec(nobs,mus):
     if len(mus)>0:
@@ -48,11 +48,11 @@ def LLvec(nobs,mus):
     
 
 def IsInside2(nobs,mu):
-    LLmax = LL(nobs,nobs)
-    # LL = TF1("LL", "-x+[0]*log(x)",0.001,10*mu);
+    LLmax = LLvec(nobs,nobs)
+    # LL = TF1("LL", "-x+[0]*log(x)",0.001,mu+10*np.sqrt(mu));
 
-    dom = np.linspace(0.001, 10*mu,1000)
-    img = LL(nobs,dom); y = LLmax - 1/2
+    dom = np.linspace(0.001, mu+10*np.sqrt(mu),1000)
+    img = LLvec(nobs,dom); y = LLmax - 1/2
     arr1 = np.where(img >= y)
     xmin = dom[arr1[0][0]]; xmax = dom[arr1[0][-1]]
     print(xmin, xmax)
@@ -88,8 +88,6 @@ def IsInside4(nobs,mu):
     u_max = x[i]
     return (u_min <= mu and mu <= u_max)
     
-    
-
 ###########################################################################
 # Cobertura vs mu a ser guardadas en tres objetos de la clase TGraphs
 g1 = TGraph(nscan_points);
@@ -111,8 +109,8 @@ for i in range(0,nscan_points):
     # Barro desde n observado hasta la esperanza mas 10 veces sigma    
     for nobs in range(0,Nmax):
         # print(mu)
-        inside1 = IsInside1(nobs,mu); inside2 = IsInside2(nobs,mu); inside3 = IsInside3(nobs,mu);
-        inside4 = IsInside4(nobs, mu);
+        inside1 = IsInside1(nobs,mu); inside2 = IsInside2(nobs,mu); 
+        inside3 = IsInside3(nobs,mu); inside4 = IsInside4(nobs, mu);
         prob = ROOT.Math.poisson_pdf(nobs,mu);
         # Completar con lo correspondiente a los otros dos intervalos
 
