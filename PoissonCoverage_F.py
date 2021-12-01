@@ -242,5 +242,13 @@ g4.Draw("L");
 gPad.Update();
 gPad.WaitPrimitive();
 
+legen = TLegend();
+legen.AddEntry(g1,"Aprox gaussiana");
+legen.AddEntry(g2,"LogLikelihood");
+legen.AddEntry(g3,"Frecuentista");
+legen.AddEntry(g4,"Bayesiano");
+legen.Draw("same");
+gPad.Update();
+
 nombre = input("Presiona una tecla para terminar")  # Asi en python3
 # nombre = raw_input("Presiona una tecla para terminar...")  # Asi en python2
