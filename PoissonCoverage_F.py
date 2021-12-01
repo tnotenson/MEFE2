@@ -87,7 +87,7 @@ def IsInside2(nobs,mu):
 def IsInside3(nobs,mu):
     alpha = 1- CL;
     xmin = 0.5*ROOT.Math.chisquared_quantile( alpha/2, 2*nobs) if (nobs>0) else 0
-    xmax = 0.5* ROOT.Math.chisquared_quantile_c( alpha/2, 2*(nobs+1));
+    xmax = 0.5*ROOT.Math.chisquared_quantile_c( alpha/2, 2*(nobs+1));
     return (xmin <= mu and mu <= xmax)
 
 def poisson_bayes(x, nobs):
@@ -97,14 +97,16 @@ def poisson_bayes(x, nobs):
 def IsInside4(nobs,mu):
     alpha = (1 - CL)/2;
     
+    if nobs == 0: # Calculo exactamente el caso nobs = 0
+        xmin = 0
+        xmax = -np.log(1-CL)
+        return (xmin <= mu and mu <= xmax)
+    
     ########## python ########################################################
     x = np.linspace(mu_min, mu_max, nscan_points)
     N = quad(poisson_bayes, 0, np.inf, arges=(nobs,))[0]
     
-    if nobs == 0: # Calculo exactamente el caso nobs = 0
-        xmin = 0
-        xmax = -np.log(1-CL)
-        return (xmin <= mu and mu <= u_max)
+
     
     cdf_bayes = 0
     i = 0
@@ -123,7 +125,19 @@ def IsInside4(nobs,mu):
     xmax = x[i]
     
     ########## pyROOT #########################################################
+    fP = LF1("fP", "[0]*TMath::PoissonI([1],x)",0.0001,mu+10*np.sqrt(mu),1);
+    fP.SetParameter(0,1) # lo fijo en 1 para integrar y luego normalizo
+    fP.SetParameter(1,nobs) 
+    N = fP.Integral(o,np.inf)
+    fP.SetParameter(0,1/N) # normalizo
     
+    xq=array.array('d',[alpha]) # array donde guardarlo
+    yq=array.array('d',[0.]) # array donde guardarlo
+    
+    fP.GetQuantiles(1,yp,xp)
+    print(yp)
+    fP.GetQuantiles(1,yp,1-xp)
+    print(yp)
     
     return (xmin <= mu and mu <= xmax)
     
