@@ -98,8 +98,8 @@ def IsInside4(nobs,mu):
     alpha = (1 - CL)/2;
     
     if nobs == 0: # Calculo exactamente el caso nobs = 0
-        xmin = 0
-        xmax = -np.log(1-CL)
+        xmin = -np.log(1-alpha)
+        xmax = -np.log(alpha)
         return (xmin <= mu and mu <= xmax)
     
     ########## python ## IN PROCESS ############################################
@@ -187,7 +187,7 @@ canvas.Divide(2,2, 0.001, 0.001);
 
 canvas.cd(1);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Aprox. Gaussiana;$\mu$;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Aprox. Gaussiana;\mu;Cobertura");
 
 
 l = TLine(mu_min,CL,mu_max,CL);
@@ -206,7 +206,7 @@ gPad.WaitPrimitive();
 
 canvas.cd(2);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Log Likelihood;$\mu$;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Log Likelihood;\mu;Cobertura");
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
@@ -220,7 +220,7 @@ gPad.WaitPrimitive();
   
 canvas.cd(3);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Frecuentista;$\mu$;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Frecuentista;\mu;Cobertura");
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
@@ -234,7 +234,7 @@ gPad.WaitPrimitive();
 
 canvas.cd(4);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Bayesiano;$\mu$;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Bayesiano;\mu;Cobertura");
 
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
