@@ -138,7 +138,7 @@ def IsInside4(nobs,mu):
     yq=array.array('d',[0.,0.]) # array donde guardar los cuantiles
     
     fP.GetQuantiles(2,yq,xq)
-    print(mu, yq)
+    #print(mu, yq)
     xmin, xmax = yq
     
     return (xmin <= mu and mu <= xmax)
@@ -170,8 +170,10 @@ for i in range(0,nscan_points):
         # Completar con lo correspondiente a los otros dos intervalos
 
     # Si nobs esta dentro del intervalo, agrega la probabilidd de ese caso particular, i.e. Poisson(nobs,mu).
-        if (inside1): probInside1 += prob; if (inside2): probInside2 += prob;
-        if (inside3): probInside3 += prob; if (inside4): probInside4 += prob;
+        if (inside1): probInside1 += prob;
+        if (inside2): probInside2 += prob;
+        if (inside3): probInside3 += prob;
+        if (inside4): probInside4 += prob;
 
     Offset = 0.003; # Vertical offset between plots to avoid overlap   
     g1.SetPoint(i,mu,probInside1); g2.SetPoint(i,mu,probInside2);
@@ -182,12 +184,13 @@ for i in range(0,nscan_points):
 # Create TCanvas & TFrame, and a TLine at CL for reference 
 gStyle.SetOptStat(0);
 
-canvas = TCanvas("canvas","canvas",900,700);
-canvas.Divide(2,2, 0.01, 0.01);
-
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+canvas = TCanvas("canvas","canvas",700,500);
+canvas.Divide(2,2, 0.001, 0.001);
 
 canvas.cd(1);
+
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Aprox. Gaussiana;\\text{Parametro de Poisson }\\mu;Cobertura");
+
 
 l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
@@ -205,7 +208,7 @@ gPad.WaitPrimitive();
 
 canvas.cd(2);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Log Likelihood;\\text{Parametro de Poisson }\\mu;Cobertura");
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
@@ -219,7 +222,7 @@ gPad.WaitPrimitive();
   
 canvas.cd(3);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Frecuentista;\\text{Parametro de Poisson }\\mu;Cobertura");
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
@@ -233,7 +236,7 @@ gPad.WaitPrimitive();
 
 canvas.cd(4);
 
-gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Bayesiano;\\text{Parametro de Poisson }\\mu;Cobertura");
 
 # l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
@@ -246,13 +249,13 @@ g4.Draw("L");
 gPad.Update();
 gPad.WaitPrimitive();
 
-legen = TLegend();
-legen.AddEntry(g1,"Aprox gaussiana");
-legen.AddEntry(g2,"Log Likelihood");
-legen.AddEntry(g3,"Frecuentista");
-legen.AddEntry(g4,"Bayesiano");
-legen.Draw("same");
-gPad.Update();
+#legen = TLegend();
+#legen.AddEntry(g1,"Aprox gaussiana");
+#legen.AddEntry(g2,"Log Likelihood");
+#legen.AddEntry(g3,"Frecuentista");
+#legen.AddEntry(g4,"Bayesiano");
+#legen.Draw("same");
+#gPad.Update();
 
 nombre = input("Presiona una tecla para terminar")  # Asi en python3
 # nombre = raw_input("Presiona una tecla para terminar...")  # Asi en python2
