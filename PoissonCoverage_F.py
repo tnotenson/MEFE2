@@ -34,28 +34,38 @@ def IsInside1(nobs,mu):
 # (2) Intervalo usando la verosimilitud: LL(ci_limits) = LLmax-1/2 ///////////
 # A completar!
     
-# def LL(nobs,mu):
-#     if mu>0:
-#         return -mu+nobs*np.log(mu)
-#     else:
-#         return 0
+def LL(nobs,mu):
+    if mu>0:
+        return -mu+nobs*np.log(mu)
+    else:
+        return 0
+     
+def fLL(x,par):
+    return -par[0]+x*np.log(par[0])
 
 def LLvec(nobs,mus):
     if len(mus)>0:
         return -mus+nobs*np.log(mus)
     else:
         return np.zeros((len(mus)))
-    
+
 
 def IsInside2(nobs,mu):
-    LLmax = LLvec(nobs,nobs)
-    # LL = TF1("LL", "-x+[0]*log(x)",0.001,mu+10*np.sqrt(mu));
-
-    dom = np.linspace(0.001, mu+10*np.sqrt(mu),1000)
-    img = LLvec(nobs,dom); y = LLmax - 1/2
-    arr1 = np.where(img >= y)
-    xmin = dom[arr1[0][0]]; xmax = dom[arr1[0][-1]]
+    # LLmax = LL(nobs,nobs)
+    # dom = np.linspace(0.001, mu+10*np.sqrt(mu),1000)
+    # img = LLvec(nobs,dom); y = LLmax - 1/2
+    # arr1 = np.where(img >= y)
+    # xmin = dom[arr1[0][0]]; xmax = dom[arr1[0][-1]]
+    # print(xmin, xmax)
+    
+    delta = 1/2
+    rootLL = TF1("LL", fLL,0.001,mu+10*np.sqrt(mu),1);
+    muMLE   = rootLL.GetMaximumX();
+    LL_max = rootLL.Eval(muMLE);
+    xmin = rootLL.GetX(LL_max-delta,0.0001,muMLE);
+    xmax = rootLL.GetX(LL_max-delta,muMLE,5*muMLE);
     print(xmin, xmax)
+    
     return (xmin <= mu and mu <= xmax)
 
 
