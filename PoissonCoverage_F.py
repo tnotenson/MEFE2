@@ -205,7 +205,8 @@ gPad.WaitPrimitive();
 
 canvas.cd(2);
 
-l = TLine(mu_min,CL,mu_max,CL);
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+# l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
 
@@ -218,7 +219,8 @@ gPad.WaitPrimitive();
   
 canvas.cd(3);
 
-l = TLine(mu_min,CL,mu_max,CL);
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+# l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
 
@@ -231,7 +233,9 @@ gPad.WaitPrimitive();
 
 canvas.cd(4);
 
-l = TLine(mu_min,CL,mu_max,CL);
+gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
+
+# l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
 
