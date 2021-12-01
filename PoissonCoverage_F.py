@@ -144,7 +144,7 @@ def IsInside4(nobs,mu):
     return (xmin <= mu and mu <= xmax)
     
 ###########################################################################
-# Cobertura vs mu a ser guardadas en tres objetos de la clase TGraphs
+# Cobertura vs mu a ser guardadas en cuatro objetos de la clase TGraphs
 g1 = TGraph(nscan_points);
 g2 = TGraph(nscan_points);
 g3 = TGraph(nscan_points);
@@ -170,22 +170,20 @@ for i in range(0,nscan_points):
         # Completar con lo correspondiente a los otros dos intervalos
 
     # Si nobs esta dentro del intervalo, agrega la probabilidd de ese caso particular, i.e. Poisson(nobs,mu).
-        if (inside1): probInside1 += prob;
-        if (inside2): probInside2 += prob;
-        if (inside3): probInside3 += prob;
-        if (inside4): probInside4 += prob;
+        if (inside1): probInside1 += prob; if (inside2): probInside2 += prob;
+        if (inside3): probInside3 += prob; if (inside4): probInside4 += prob;
 
     Offset = 0.003; # Vertical offset between plots to avoid overlap   
-    g1.SetPoint(i,mu,probInside1);
-    g2.SetPoint(i,mu,probInside2);
-    g3.SetPoint(i,mu,probInside3);
-    g4.SetPoint(i,mu,probInside4);
+    g1.SetPoint(i,mu,probInside1); g2.SetPoint(i,mu,probInside2);
+    g3.SetPoint(i,mu,probInside3); g4.SetPoint(i,mu,probInside4);
    
 
 ########################################################################
 # Create TCanvas & TFrame, and a TLine at CL for reference 
-canvas = TCanvas("canvas","canvas",700,1000);
-canvas.Divide(1,3);
+gStyle.SetOptStat(0);
+
+canvas = TCanvas("canvas","canvas",900,700);
+canvas.Divide(2,2, 0.01, 0.01);
 
 gPad.DrawFrame(mu_min,CoverageMin,mu_max,1,"Comparacion de los Intervalos de Confianza para Poisson;\\text{Parametro de Poisson }\\mu;Cobertura");
 
@@ -195,7 +193,7 @@ l = TLine(mu_min,CL,mu_max,CL);
 l.SetLineStyle(kDashed);
 l.Draw(); # Draw a reference line at y-axis = CL
 
-# The 3 TGraphs can be plotted together (I added a little offset between them),
+# The 4 TGraphs can be plotted together (I added a little offset between them),
 # but first better look at each of them one at a time. Uncomment as necessary:
  
 # Naive Poisson interval (Red) 
