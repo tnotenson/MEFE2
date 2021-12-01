@@ -56,22 +56,26 @@ def LLvec(nobs,mus):
    
 
 def IsInside2(nobs,mu):
-    LLmax = LL(nobs,nobs)
-    dom = np.linspace(0.001, mu+10*np.sqrt(mu),1000)
-    img = LLvec(nobs,dom); y = LLmax - 1/2
-    arr1 = np.where(img >= y)
-    xmin = dom[arr1[0][0]]; xmax = dom[arr1[0][-1]]
-    print('python puro',xmin, xmax)
+    # LLmax = LL(nobs,nobs)
+    # dom = np.linspace(0.001, mu+10*np.sqrt(mu),1000)
+    # img = LLvec(nobs,dom); y = LLmax - 1/2
+    # arr1 = np.where(img >= y)
+    # xmin = dom[arr1[0][0]]; xmax = dom[arr1[0][-1]]
+    # print('python puro',xmin, xmax)
     
     delta = 1/2
     rootLL = TF1("rootLL", "-x+[n]*log(x)",0.0001,mu+10*np.sqrt(mu),1);
     rootLL.SetParameter(0,nobs)
     muMLE   = rootLL.GetMaximumX();
-    print('nobs',muMLE,nobs)
+    # print('nobs',muMLE,nobs)
     LL_max = rootLL.Eval(muMLE);
-    xmin = rootLL.GetX(LL_max-delta,0.0001,muMLE);
-    xmax = rootLL.GetX(LL_max-delta,muMLE,5*muMLE);
-    print('pyROOT', xmin, xmax)
+    if nobs==0:
+        xmin = 0
+        xmax = delta
+    else:
+        xmin = rootLL.GetX(LL_max-delta,0.0001,muMLE);
+        xmax = rootLL.GetX(LL_max-delta,muMLE,5*muMLE);
+    # print('pyROOT', xmin, xmax)
     
     return (xmin <= mu and mu <= xmax)
 
